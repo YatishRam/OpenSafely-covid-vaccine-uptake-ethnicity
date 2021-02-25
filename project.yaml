@@ -1,0 +1,173 @@
+version: '3.0'
+
+expectations:
+  population_size: 1000
+
+actions:
+  generate_summary_cohort:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_summary --index-date-range "2021-01-01 to 2021-01-01 by month" --output-dir=output/measures/summary
+    outputs:
+      highly_sensitive:
+        cohort: output/measures/summary/input_summary_*.csv
+  
+  generate_summary_measures:
+    run: cohortextractor:latest generate_measures --study-definition study_definition_summary --output-dir=output/measures/summary
+    needs: [generate_summary_cohort]
+    outputs:
+      moderately_sensitive:
+        measure_csv: output/measures/summary/measure_*.csv
+
+  merge_summary_measures:
+    run: r:latest analysis/merge_measures.R summary
+    needs: [generate_summary_measures]
+    outputs:
+      moderately_sensitive:
+        measure_csv: output/measures/summary.csv
+
+  generate_summary_riskgroup_cohort:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_summary_riskgroup --index-date-range "2021-01-01 to 2021-01-01 by month" --output-dir=output/measures/summary_riskgroup
+    outputs:
+      highly_sensitive:
+        cohort: output/measures/summary_riskgroup/input_summary_riskgroup_*.csv
+  
+  generate_summary_riskgroup_measures:
+    run: cohortextractor:latest generate_measures --study-definition study_definition_summary_riskgroup --output-dir=output/measures/summary_riskgroup
+    needs: [generate_summary_riskgroup_cohort]
+    outputs:
+      moderately_sensitive:
+        measure_csv: output/measures/summary_riskgroup/measure_*.csv
+
+  merge_summary_riskgroup_measures:
+    run: r:latest analysis/merge_measures.R summary_riskgroup
+    needs: [generate_summary_riskgroup_measures]
+    outputs:
+      moderately_sensitive:
+        measure_csv: output/measures/summary_riskgroup.csv
+
+  generate_gender_cohort:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_gender --index-date-range "2021-01-01 to 2021-01-01 by month" --output-dir=output/measures/gender
+    outputs:
+      highly_sensitive:
+        cohort: output/measures/gender/input_gender_*.csv
+  
+  generate_gender_measures:
+    run: cohortextractor:latest generate_measures --study-definition study_definition_gender --output-dir=output/measures/gender
+    needs: [generate_gender_cohort]
+    outputs:
+      moderately_sensitive:
+        measure_csv: output/measures/gender/measure_*.csv
+
+  merge_gender_columns:
+    run: r:latest analysis/merge_columns.R gender
+    needs: [generate_gender_measures]
+    outputs:
+      moderately_sensitive:
+        measure_csv: output/measures/gender/measure*.csv
+
+  merge_gender_measures:
+    run: r:latest analysis/merge_measures.R gender
+    needs: [merge_gender_columns]
+    outputs:
+      moderately_sensitive:
+        measure_csv: output/measures/gender.csv
+
+  generate_gender_riskgroup_cohort:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_gender_riskgroup --index-date-range "2021-01-01 to 2021-01-01 by month" --output-dir=output/measures/gender_riskgroup
+    outputs:
+      highly_sensitive:
+        cohort: output/measures/gender_riskgroup/input_gender_riskgroup_*.csv
+  
+  generate_gender_riskgroup_measures:
+    run: cohortextractor:latest generate_measures --study-definition study_definition_gender_riskgroup --output-dir=output/measures/gender_riskgroup
+    needs: [generate_gender_riskgroup_cohort]
+    outputs:
+      moderately_sensitive:
+        measure_csv: output/measures/gender_riskgroup/measure_*.csv
+
+  merge_gender_riskgroup_columns:
+    run: r:latest analysis/merge_columns.R gender_riskgroup
+    needs: [generate_gender_riskgroup_measures]
+    outputs:
+      moderately_sensitive:
+        measure_csv: output/measures/gender_riskgroup/measure*.csv
+
+  merge_gender_riskgroup_measures:
+    run: r:latest analysis/merge_measures.R gender_riskgroup
+    needs: [merge_gender_riskgroup_columns]
+    outputs:
+      moderately_sensitive:
+        measure_csv: output/measures/gender_riskgroup.csv
+
+  generate_ethnicity_cohort:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_ethnicity --index-date-range "2021-01-01 to 2021-01-01 by month" --output-dir=output/measures/ethnicity
+    outputs:
+      highly_sensitive:
+        cohort: output/measures/ethnicity/input_ethnicity_*.csv
+  
+  generate_ethnicity_measures:
+    run: cohortextractor:latest generate_measures --study-definition study_definition_ethnicity --output-dir=output/measures/ethnicity
+    needs: [generate_ethnicity_cohort]
+    outputs:
+      moderately_sensitive:
+        measure_csv: output/measures/ethnicity/measure_*.csv
+
+  merge_ethnicity_columns:
+    run: r:latest analysis/merge_columns.R ethnicity
+    needs: [generate_ethnicity_measures]
+    outputs:
+      moderately_sensitive:
+        measure_csv: output/measures/ethnicity/measure*.csv
+
+  merge_ethnicity_measures:
+    run: r:latest analysis/merge_measures.R ethnicity
+    needs: [merge_ethnicity_columns]
+    outputs:
+      moderately_sensitive:
+        measure_csv: output/measures/ethnicity.csv
+
+  generate_ethnicity_riskgroup_cohort:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_ethnicity_riskgroup --index-date-range "2021-01-01 to 2021-01-01 by month" --output-dir=output/measures/ethnicity_riskgroup
+    outputs:
+      highly_sensitive:
+        cohort: output/measures/ethnicity_riskgroup/input_ethnicity_riskgroup_*.csv
+  
+  generate_ethnicity_riskgroup_measures:
+    run: cohortextractor:latest generate_measures --study-definition study_definition_ethnicity_riskgroup --output-dir=output/measures/ethnicity_riskgroup
+    needs: [generate_ethnicity_riskgroup_cohort]
+    outputs:
+      moderately_sensitive:
+        measure_csv: output/measures/ethnicity_riskgroup/measure_*.csv
+
+  merge_ethnicity_riskgroup_columns:
+    run: r:latest analysis/merge_columns.R ethnicity_riskgroup
+    needs: [generate_ethnicity_riskgroup_measures]
+    outputs:
+      moderately_sensitive:
+        measure_csv: output/measures/ethnicity_riskgroup/measure*.csv
+
+  merge_ethnicity_riskgroup_measures:
+    run: r:latest analysis/merge_measures.R ethnicity_riskgroup
+    needs: [merge_ethnicity_riskgroup_columns]
+    outputs:
+      moderately_sensitive:
+        measure_csv: output/measures/ethnicity_riskgroup.csv
+
+  generate_pregnant_cohort:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_pregnant --index-date-range "2021-01-01 to 2021-01-01 by month" --output-dir=output/measures/pregnant
+    outputs:
+      highly_sensitive:
+        cohort: output/measures/pregnant/input_pregnant_*.csv
+  
+  generate_pregnant_measures:
+    run: cohortextractor:latest generate_measures --study-definition study_definition_pregnant --output-dir=output/measures/pregnant
+    needs: [generate_pregnant_cohort]
+    outputs:
+      moderately_sensitive:
+        measure_csv: output/measures/pregnant/measure_*.csv
+
+  merge_pregnant_measures:
+    run: r:latest analysis/merge_measures.R pregnant clinical_riskgroup
+    needs: [generate_pregnant_measures]
+    outputs:
+      moderately_sensitive:
+        measure_csv: output/measures/pregnant.csv
